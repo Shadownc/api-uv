@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Api {
+  id          String    @id @default(cuid())
+  name        String    // API名称
+  description String?   @db.Text  // API描述
+  endpoint    String    // 基础接口地址
+  method      String    // 请求方式
+  status      String    @default("normal")  // API状态
+  returnType  String    // 返回格式 (如 "IMG/JSON")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // 新增字段
+  parameters  Parameter[] // 请求参数
+  responses   Response[]  // 返回参数
+  examples    Example[]   // 示例
+  ApiCall     ApiCall[]   // 调用记录
+}
+
+// 请求参数表
+model Parameter {
+  id          String  @id @default(cuid())
+  apiId       String
+  name        String  // 参数名
+  required    Boolean // 是否必填
+  description String  // 说明
+  api         Api     @relation(fields: [apiId], references: [id], onDelete: Cascade)
+
+  @@index([apiId])
+}
+
+// 返回参数表
+model Response {
+  id          String  @id @default(cuid())
+  apiId       String
+  name        String  // 参数名
+  required    Boolean // 是否必含
+  description String  // 说明
+  api         Api     @relation(fields: [apiId], references: [id], onDelete: Cascade)
+
+  @@index([apiId])
+}
+
+// 示例表
+model Example {
+  id          String  @id @default(cuid())
+  apiId       String
+  type        String  // 示例类型 (如 "请求示例", "返回示例")
+  content     String  @db.Text // 示例内容
+  api         Api     @relation(fields: [apiId], references: [id], onDelete: Cascade)
+
+  @@index([apiId])
+}
+
+model ApiCall {
+  id        String   @id @default(cuid())
+  apiId     String
+  timestamp DateTime @default(now())
+  api       Api      @relation(fields: [apiId], references: [id], onDelete: Cascade)
+
+  @@index([apiId])
+}
+
+// 添加 User 模型
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String?
+  role          String    @default("user")  // "admin" or "user"
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
