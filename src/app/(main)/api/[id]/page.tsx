@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import LineChart from '@/components/LineChart';
 import CopyButton from '@/components/CopyButton';
+import Link from 'next/link';
 
 interface Props {
   params: { id: string }
@@ -63,11 +64,13 @@ export default async function ApiDetailPage({ params }: Props) {
       {/* 面包屑导航 */}
       <nav className="mb-8">
         <ol className="flex items-center space-x-2 text-sm text-gray-500">
-          <li><a href="/" className="hover:text-primary-600">首页</a></li>
+          <li>
+            <Link href="/" className="hover:text-primary-600">
+              API
+            </Link>
+          </li>
           <li>/</li>
-          <li><a href="/api" className="hover:text-primary-600">API</a></li>
-          <li>/</li>
-          <li className="text-gray-900">详情</li>
+          <li className="text-gray-900">{api.name}</li>
         </ol>
       </nav>
 
