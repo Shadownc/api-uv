@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useState } from 'react';
 import { useDebounce } from '@/hooks/useDebounce';
 
 export default function ApiSearch() {
@@ -9,15 +9,19 @@ export default function ApiSearch() {
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   
-  // 使用防抖来避免频繁搜索
-  useDebounce(() => {
-    const params = new URLSearchParams(searchParams);
-    if (searchTerm) {
-      params.set('q', searchTerm);
+  const updateSearch = useCallback((value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value) {
+      params.set('q', value);
     } else {
       params.delete('q');
     }
     router.push(`/?${params.toString()}`);
+  }, [router, searchParams]);
+
+  // 使用防抖来避免频繁搜索
+  useDebounce(() => {
+    updateSearch(searchTerm);
   }, 300, [searchTerm]);
 
   return (

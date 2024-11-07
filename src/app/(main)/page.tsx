@@ -1,22 +1,15 @@
-import ApiCard from '@/components/ApiCard';
+import { Suspense } from 'react';
 import ApiSearch from '@/components/ApiSearch';
 import { prisma } from '@/lib/prisma';
-import { Api } from '@/types/api';
-import { Suspense } from 'react';
+import ApiCard from '@/components/ApiCard';
 
-// 添加 Searchparams 类型
-interface SearchParams {
-  q?: string;
-}
-
-// 修改搜索逻辑，移除 insensitive 模式
-async function getApis(search?: string) {
-  const where = search
+async function getApis(searchQuery?: string | null) {
+  const where = searchQuery
     ? {
         OR: [
-          { name: { contains: search } },
-          { description: { contains: search } },
-          { endpoint: { contains: search } },
+          { name: { contains: searchQuery } },
+          { description: { contains: searchQuery } },
+          { endpoint: { contains: searchQuery } },
         ],
       }
     : {};
@@ -49,31 +42,8 @@ async function getApis(search?: string) {
   }));
 }
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) {
-  // 使用 Suspense 包裹异步内容
-  return (
-    <div className="py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">API 服务概览</h1>
-          <ApiSearch />
-        </div>
-
-        <Suspense fallback={<div>加载中...</div>}>
-          <ApiList searchQuery={searchParams.q} />
-        </Suspense>
-      </div>
-    </div>
-  );
-}
-
-// 创建一个新组件处理 API 列表
-async function ApiList({ searchQuery }: { searchQuery?: string }) {
-  const apis = await getApis(searchQuery);
+async function SearchResults({ query }: { query?: string | null }) {
+  const apis = await getApis(query);
 
   return (
     <>
@@ -100,7 +70,7 @@ async function ApiList({ searchQuery }: { searchQuery?: string }) {
       {/* API 列表 */}
       <div>
         <h2 className="text-xl font-bold text-gray-900 mb-6">
-          可用接口 {searchQuery && `(搜索: ${searchQuery})`}
+          可用接口 {query ? `(搜索: ${query})` : ''}
         </h2>
         {apis.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
@@ -122,5 +92,29 @@ async function ApiList({ searchQuery }: { searchQuery?: string }) {
         )}
       </div>
     </>
+  );
+}
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: { q?: string }
+}) {
+  const { q } = await searchParams;
+
+  return (
+    <div className="py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">API 服务概览</h1>
+          <ApiSearch />
+        </div>
+
+        <Suspense fallback={<div>加载中...</div>}>
+          {/* @ts-expect-error Async Server Component */}
+          <SearchResults query={q} />
+        </Suspense>
+      </div>
+    </div>
   );
 }

@@ -50,7 +50,9 @@ async function getApiDetails(id: string) {
 }
 
 export default async function ApiDetailPage({ params }: Props) {
-  const api = await getApiDetails(params.id);
+  // 正确处理异步 params
+  const { id } = await params;
+  const api = await getApiDetails(id);
   
   if (!api) {
     notFound();
@@ -136,7 +138,7 @@ export default async function ApiDetailPage({ params }: Props) {
                     code: 0,
                     message: "success",
                     data: {
-                      id: params.id,
+                      id,
                       name: api.name,
                       description: api.description
                     }
@@ -148,7 +150,7 @@ export default async function ApiDetailPage({ params }: Props) {
                   code: 0,
                   message: "success",
                   data: {
-                    id: params.id,
+                    id,
                     name: api.name,
                     description: api.description
                   }
