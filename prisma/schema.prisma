@@ -62,11 +62,9 @@ model Example {
 
 model ApiCall {
   id        String   @id @default(cuid())
+  api       Api      @relation(fields: [apiId], references: [id])
   apiId     String
   timestamp DateTime @default(now())
-  api       Api      @relation(fields: [apiId], references: [id], onDelete: Cascade)
-
-  @@index([apiId])
 }
 
 // 添加 User 模型

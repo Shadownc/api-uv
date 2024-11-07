@@ -95,9 +95,9 @@ export default async function ApiDetailPage({ params }: Props) {
             <h3 className="text-lg font-medium text-gray-900 mb-4">接口地址</h3>
             <div className="flex items-center bg-gray-50 rounded-lg p-4">
               <code className="text-sm text-gray-600 flex-1">
-                {api.endpoint}
+                {`${process.env.NEXT_PUBLIC_API_URL || ''}${api.endpoint}`}
               </code>
-              <CopyButton text={`https://api.example.com/api/${params.id}`} />
+              <CopyButton text={`${process.env.NEXT_PUBLIC_API_URL || ''}${api.endpoint}`} />
             </div>
           </div>
 
