@@ -1,0 +1,9 @@
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=your_production_database_url
+      - WEATHER_API_KEY=your_weather_api_key 

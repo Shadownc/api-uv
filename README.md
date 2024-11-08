@@ -22,3 +22,26 @@ npx prisma generate
 # 添加测试数据
 npm run seed
 ```
+
+## 部署步骤
+```
+# 1. 构建项目
+npm run build
+
+# 2. 执行数据库迁移
+npx prisma migrate deploy
+
+# 3. 初始化 API 数据
+npm run init-db
+
+# 4. 启动服务
+npm start
+```
+
+## 本地初始化
+```
+npx prisma migrate reset --force
+npx prisma generate
+npx prisma migrate dev --name init
+npm run init-db
+```

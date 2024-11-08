@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "seed": "ts-node --project tsconfig-seed.json prisma/seed.ts",
-    "create-admin": "ts-node --project tsconfig-scripts.json scripts/create-admin.ts"
+    "create-admin": "ts-node --project tsconfig-scripts.json scripts/create-admin.ts",
+    "init-db": "ts-node --transpile-only src/lib/init-apis.ts",
+    "reset-db": "npx prisma migrate reset --force",
+    "reinit": "npm run reset-db && npm run init-db"
   },
   "dependencies": {
     "@heroicons/react": "^2.1.5",
